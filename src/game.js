@@ -135,9 +135,23 @@ var game = {
         // draw the aiming point
         ctx.drawImage(graphicAssets.aim.image, Input.mouse.x - graphicAssets.aim.image.width / 2, Input.mouse.y - graphicAssets.aim.image.height / 2);
 
+        // draw life
+        for(let i = 0, anchor = graphicAssets.heart.image.width + 5; i < this.player.life / 2; i++)
+        {
+            if (Math.trunc(this.player.life / 2) >= i + 1)
+            ctx.drawImage(graphicAssets.heart.image, 15 + anchor * i, 10);
+            else
+            ctx.drawImage(graphicAssets.halfheart.image, 15 + anchor * i, 10);
+        }
+
+        // Corazones vacios hardcodeados, no me gusta este approach
+        if (this.player.life < 5) ctx.drawImage(graphicAssets.emptyheart.image, 15 + (graphicAssets.heart.image.width + 5) * 2, 10);
+        if (this.player.life < 3) ctx.drawImage(graphicAssets.emptyheart.image, 15 + graphicAssets.heart.image.width + 5, 10);
+        if (this.player.life < 1) ctx.drawImage(graphicAssets.emptyheart.image, 15, 10);
+
         ctx.fillStyle = "white";
-        ctx.font = "24px Comic Sans MS"
-        ctx.fillText("Score: " + this.score, canvas.width/2 - 60, 84);
+        ctx.font = "24px Courier"
+        ctx.fillText("Score: " + this.score, canvas.width/2 + 50, 42);
     }
 
 }

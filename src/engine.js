@@ -30,6 +30,18 @@ var graphicAssets = {
         path: "assets/invader4.png",
         image: null
     },
+    heart: {
+        path: "assets/heart.png",
+        image: null
+    },
+    halfheart: {
+        path: "assets/halfheart.png",
+        image: null
+    },
+    emptyheart: {
+        path: "assets/emptyheart.png",
+        image: null
+    },
     player_ship: {
         path: "assets/baoyzx.png",
         image: null
@@ -76,8 +88,50 @@ function BodyLoaded()
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext("2d");
 
+    
     SetupKeyboardEvents();
     SetupMouseEvents();
+    InitMainMenu();
+
+}
+
+function InitMainMenu() {
+    const menuStartButton = document.getElementById("startButton");
+    const menuCreditsButton = document.getElementById("creditsButton");
+    const menu = document.getElementById("menu");
+
+    //HideMenuAndStart();
+    menuStartButton.onclick  = function() {
+        HideMenuAndStart();
+    };
+
+    menuCreditsButton.onclick = function() {
+        // hide the buttons
+        menuStartButton.style.display = "none";
+        menuCreditsButton.style.display = "none";
+
+        // start the credits animation
+        const creditsCont = document.querySelector("#credits > div");
+        creditsCont.classList.add("creditsAnimation");
+
+        //currentState = EngineState.Credits;
+
+        creditsCont.addEventListener("animationend", function() {
+            // animation end, show the buttons
+            menuStartButton.style.display = "block";
+            menuCreditsButton.style.display = "block";
+
+            // reset animation
+            creditsCont.classList.remove("creditsAnimation");
+
+            //currentState = EngineState.MainMenu;
+        }, false);
+    }
+}
+
+function HideMenuAndStart()
+{
+    menu.style.left = "-" + menu.clientWidth + "px";
 
     LoadImages(graphicAssets, function() {
         // load audio
@@ -91,7 +145,6 @@ function BodyLoaded()
         Loop();
     })
 }
-
 
 function Loop()
 {
@@ -109,6 +162,9 @@ function Loop()
     lastTimeUpdate = now;
 
     currentFramesCounter++;
+
+    if(currentFramesCounter == 59) game.score++;
+
     acumDelta += deltaTime;
 
     if (acumDelta >= 1)
@@ -147,8 +203,8 @@ function Draw(ctx)
     // draw FPS data
     ctx.fillStyle = "white";
     ctx.font = "12px Comic Sans MS"
-    ctx.fillText("frames=" + currentFramesCounter, 10, 20);
-    ctx.fillText("deltaTime=" + deltaTime, 10, 36);
-    ctx.fillText("current FPS=" + (1 / deltaTime).toFixed(2), 10, 52);
-    ctx.fillText("last second FPS=" + lastFramesCounter, 10, 68);
+    ctx.fillText("frames=" + currentFramesCounter, 10, 630+20);
+    ctx.fillText("deltaTime=" + deltaTime, 10, 630+36);
+    ctx.fillText("current FPS=" + (1 / deltaTime).toFixed(2), 10, 630+52);
+    ctx.fillText("last second FPS=" + lastFramesCounter, 10, 630+68);
 }

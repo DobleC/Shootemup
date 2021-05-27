@@ -56,7 +56,7 @@ class BulletPool {
         });
 
         // debug draw
-        ctx.fillStyle = "red";
+        /*ctx.fillStyle = "red";
         ctx.strokeStyle = "white";
         let x = canvas.width - 40;
         let y = 20;
@@ -65,7 +65,7 @@ class BulletPool {
                 ctx.fillRect(x, (i * 20) + y, 20, 20);
             }
             ctx.strokeRect(x, (i * 20) + y, 20, 20);
-        };
+        };*/
     }
 
     Activate(x, y, rotation, speed, power) {
