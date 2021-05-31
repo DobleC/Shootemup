@@ -43,6 +43,23 @@ var game = {
                 enemy.Update(deltaTime);
             });
 
+            for (let j = 0; j < this.enemyBullets.bullets.length; j++)
+                {
+                    let bullet = this.enemyBullets.bullets[j];
+
+                    if (bullet.active)
+                    {
+                        let collision = this.player.CheckCollision(bullet.position);
+
+                        if (collision)
+                        {
+                            this.enemyBullets.Deactivate(bullet);
+                            this.playerHitted();
+                        }
+                    }
+                }  
+
+
             // check bullets-enemies or player-enemies collisions
             for (let i = 0; i < this.enemies.length; i++)
             {
@@ -54,26 +71,16 @@ var game = {
                 }
 
 
-                let collision = this.enemies[i].CheckPlayerCollision(player.position);
+                let collision = this.enemies[i].CheckCollision(player.position);
 
                 if (collision)
                 {
             
                     let enemyDead = this.enemies[i].Damage(this.player.damageOnCollision);
                     if (enemyDead)
-                    {
-                        --this.player.life;
-                        console.log("Impacto player, vida = " + this.player.life);
-                        
-                        if (this.player.life == 0)
-                        {
-                            document.getElementById("gamescore").innerText = this.score;
-                            this.gameover = true;
-                            GameOver();
-                        }
-                        
+                    { 
+                        this.playerHitted();
                         this.GenerateEnemies(i);
-                        
                         return;
                     }
                 }
@@ -84,7 +91,7 @@ var game = {
 
                     if (bullet.active)
                     {
-                        let collision = this.enemies[i].CheckBulletCollision(bullet.position);
+                        let collision = this.enemies[i].CheckCollision(bullet.position);
 
                         if (collision)
                         {
@@ -94,7 +101,7 @@ var game = {
 
                             // disable the bullet
                             this.player.bulletPool.Deactivate(bullet);
-                            console.log("Impacto bala");
+                            console.log("Impacto a enemigo");
                             
                             // kill enemies, spawn more if enemies list = 0
                             if (enemyDead)
@@ -107,6 +114,19 @@ var game = {
                     }
                 }  
             }
+        }
+    },
+
+    playerHitted: function()
+    {
+        --this.player.life;
+        console.log("Impacto en player, vida = " + this.player.life);
+        
+        if (this.player.life == 0)
+        {
+            document.getElementById("gamescore").innerText = this.score;
+            this.gameover = true;
+            GameOver();
         }
     },
 

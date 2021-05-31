@@ -68,12 +68,6 @@ class Enemy
     {
         for (let i = 0; i < this.collider.originalPolygon.length; i++)
             this.collider.transformedPolygon[i] = {x: 0, y: 0};
-
-           /* this.ball = CreateBall(world, this.position.x/100, this.position.y/100, 0.2, {
-                friction: 0.2,
-                restitution: 0.5,
-                type : b2Body.b2_kinematicBody
-                });*/
     }
 
     Update(deltaTime)
@@ -120,7 +114,7 @@ class Enemy
            // this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
         }
 
-        if(currentFramesCounter == 59)
+        if(Math.random() >= 0.99)
         {
             playerEnemyVector = new Vector2(player.position.x - this.position.x, player.position.y - this.position.y);
             this.rotation = Math.atan2(playerEnemyVector.y, playerEnemyVector.x);
@@ -139,32 +133,28 @@ class Enemy
 
         ctx.restore();
 
-        // draw the collider polygon
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
-        for (let i = 1; i < this.collider.transformedPolygon.length; i++)
+        if(debug)
         {
-            ctx.lineTo(this.collider.transformedPolygon[i].x, this.collider.transformedPolygon[i].y);
+            // draw the collider polygon
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            for (let i = 1; i < this.collider.transformedPolygon.length; i++)
+            {
+                ctx.lineTo(this.collider.transformedPolygon[i].x, this.collider.transformedPolygon[i].y);
+            }
+            ctx.lineTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fill();
         }
-        ctx.lineTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.fill();
     }
 
-    
-
-    CheckBulletCollision(bulletPosition)
+    CheckCollision(Position)
     {
-        return CheckCollisionPolygon(bulletPosition, this.collider.transformedPolygon);
-    }
-
-    CheckPlayerCollision(playerPosition)
-    {
-        return CheckCollisionPolygon(playerPosition, this.collider.transformedPolygon);
+        return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
     }
 
     Damage(damage)

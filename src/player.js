@@ -16,6 +16,7 @@ var player = {
     shotRate: 0.15,
     shotRateAux: 0.2,
 
+    
     bulletPool: null,
 
     start: function(position) {
@@ -35,6 +36,21 @@ var player = {
         this.damageOnCollision = 5;
 
         this.bulletPool = new BulletPool(5);
+
+        this.collider = {
+            originalPolygon : [
+                {x: -10, y: -15},
+                {x: -10, y: 15},
+                {x: 10, y: 15},
+                {x: 10, y: -15},
+    
+            ],
+            transformedPolygon : []
+        };
+
+        for (let i = 0; i < this.collider.originalPolygon.length; i++)
+        this.collider.transformedPolygon[i] = {x: 0, y: 0};
+
     },
 
     update: function(deltaTime) {
@@ -66,6 +82,17 @@ var player = {
         // rotation
         this.rotation = Math.atan2(Input.mouse.y - this.position.y, Input.mouse.x - this.position.x) + PIH;
 
+        for (let i = 0; i < this.collider.originalPolygon.length; i++)
+        {
+            // 1: update the vertex position regarding the polygon position
+            this.collider.transformedPolygon[i].x =
+                this.position.x + this.collider.originalPolygon[i].x;
+            this.collider.transformedPolygon[i].y =
+                this.position.y + this.collider.originalPolygon[i].y;
+            // 2: update the vertex position regarding the polygon rotation
+           this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
+        }
+
         // shot
         if ((Input.IsKeyPressed(KEY_SPACE) || Input.IsMousePressed()) && (this.shotRateAux >= this.shotRate))
         {
@@ -81,6 +108,11 @@ var player = {
         this.bulletPool.Update(deltaTime);
     },
 
+    CheckCollision(Position)
+    {
+        return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
+    },
+
     draw: function(ctx) {
         ctx.save();
 
@@ -90,8 +122,27 @@ var player = {
         ctx.drawImage(this.img, -this.halfWidth, -this.halfHeight, this.width, this.height);
 
         ctx.restore();
-
+        
         // draw the bullets
         this.bulletPool.Draw(ctx);
+
+        if(debug)
+        {
+            // draw the collider polygon
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            for (let i = 1; i < this.collider.transformedPolygon.length; i++)
+            {
+                ctx.lineTo(this.collider.transformedPolygon[i].x, this.collider.transformedPolygon[i].y);
+            }
+            ctx.lineTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fill();
+        }
+        
     }
 }
