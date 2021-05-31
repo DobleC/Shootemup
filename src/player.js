@@ -34,7 +34,7 @@ var player = {
         this.life = 6;
         this.damageOnCollision = 5;
 
-        this.bulletPool = new BulletPool(4);
+        this.bulletPool = new BulletPool(5);
     },
 
     update: function(deltaTime) {
@@ -72,7 +72,7 @@ var player = {
             let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
             if (bullet) {
                 audio.laser.currentTime = 0.1;
-                audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 this.shotRateAux = 0;
             }
         }

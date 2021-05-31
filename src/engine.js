@@ -180,9 +180,7 @@ function Loop()
     lastTimeUpdate = now;
 
     currentFramesCounter++;
-
-    if(currentFramesCounter == 59) game.score++;
-
+    
     acumDelta += deltaTime;
 
     if (acumDelta >= 1)
@@ -219,12 +217,12 @@ function Draw(ctx)
     game.Draw(ctx);
 
     // draw FPS data
-    /*
+    
     ctx.fillStyle = "white";
     ctx.font = "12px Comic Sans MS"
     ctx.fillText("frames=" + currentFramesCounter, 10, 630+20);
     ctx.fillText("deltaTime=" + deltaTime, 10, 630+36);
     ctx.fillText("current FPS=" + (1 / deltaTime).toFixed(2), 10, 630+52);
     ctx.fillText("last second FPS=" + lastFramesCounter, 10, 630+68);
-    */
+    
 }

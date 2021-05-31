@@ -29,6 +29,8 @@ var game = {
     {
         if(!this.gameover)
         {
+            if(currentFramesCounter == 59) this.score++;
+
             // Update
             this.player.update(deltaTime);
 
@@ -39,6 +41,14 @@ var game = {
             // check bullets-enemies or player-enemies collisions
             for (let i = 0; i < this.enemies.length; i++)
             {
+                if(this.enemies[i].position.y > canvas.height + 15)
+                {
+                    this.enemies[i].Damage(100);
+                    this.GenerateEnemies(i);
+                    return;
+                }
+
+
                 let collision = this.enemies[i].CheckPlayerCollision(player.position);
 
                 if (collision)
@@ -52,9 +62,6 @@ var game = {
                         
                         if (this.player.life == 0)
                         {
-                            //alert("Has muerto pero no hay Game Over lol!");
-                            //window.location.reload();
-        
                             document.getElementById("gamescore").innerText = this.score;
                             this.gameover = true;
                             GameOver();
@@ -100,6 +107,7 @@ var game = {
 
     GenerateEnemies: function(i)
     {
+        
         RemoveElementAt(this.enemies, i);
         console.log("N enemigos: " + this.enemies.length);
         if (this.enemies.length == 0)
@@ -114,7 +122,7 @@ var game = {
             for (let i = 0; i < rng; i++)
             {
                 rngX = randomBetween(50, canvas.width - 50);
-                rngY = randomBetween(-50, -200);
+                rngY = randomBetween(-20, -130);
 
                 console.log("Posicion enemigo" + i + " " + rngX + "," + rngY);
 
