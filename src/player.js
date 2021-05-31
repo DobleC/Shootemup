@@ -72,7 +72,7 @@ var player = {
             let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
             if (bullet) {
                 audio.laser.currentTime = 0.1;
-                //audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 this.shotRateAux = 0;
             }
         }
