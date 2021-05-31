@@ -47,8 +47,6 @@ class Enemy
 
         this.scoreValue = this.level * 2 + 3;
 
-        this.bulletPool = new BulletPool(3);
-
         this.collider = {
             originalPolygon : [
                 {x: 0, y: -20},
@@ -126,9 +124,9 @@ class Enemy
         {
             playerEnemyVector = new Vector2(player.position.x - this.position.x, player.position.y - this.position.y);
             this.rotation = Math.atan2(playerEnemyVector.y, playerEnemyVector.x);
-            let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation, 300, 1);
+            let bullet = game.enemyBullets.Activate(this.position.x, this.position.y, this.rotation, 300, 1);
         }
-       this.bulletPool.Update(deltaTime);
+       //this.bulletPool.Update(deltaTime);
     }
 
     Draw(ctx)
@@ -140,9 +138,6 @@ class Enemy
         ctx.drawImage(this.img, -this.pivot.x, -this.pivot.y, this.width, this.height);
 
         ctx.restore();
-
-        // draw the bullets
-        this.bulletPool.Draw(ctx);
 
         // draw the collider polygon
         ctx.strokeStyle = "red";

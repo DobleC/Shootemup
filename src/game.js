@@ -4,6 +4,7 @@ var game = {
     enemies: [],
     score: 0,
     gameover: false,
+    //enemyBullets,
 
     Start: function()
     {
@@ -19,6 +20,8 @@ var game = {
         this.player = player;
         this.player.start(new Vector2(canvas.width / 2, canvas.height - 60));
 
+        this.enemyBullets = new BulletPool(10);
+
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
 
@@ -30,6 +33,8 @@ var game = {
         if(!this.gameover)
         {
             if(currentFramesCounter == 59) this.score++;
+
+            this.enemyBullets.Update(deltaTime);
 
             // Update
             this.player.update(deltaTime);
@@ -150,6 +155,8 @@ var game = {
             this.enemies.forEach(enemy => {
                 enemy.Draw(ctx);
             });
+
+            this.enemyBullets.Draw(ctx);
 
             // draw the aiming point
             ctx.drawImage(graphicAssets.aim.image, Input.mouse.x - graphicAssets.aim.image.width / 2, Input.mouse.y - graphicAssets.aim.image.height / 2);
