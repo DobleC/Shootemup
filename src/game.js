@@ -3,6 +3,7 @@ var game = {
     player: null,
     enemies: [],
     score: 0,
+    gameover: false,
 
     Start: function()
     {
@@ -26,65 +27,74 @@ var game = {
 
     Update: function(deltaTime)
     {
-        // Update
-        this.player.update(deltaTime);
-
-        this.enemies.forEach(enemy => {
-            enemy.Update(deltaTime);
-        });
-
-        // check bullets-enemies or player-enemies collisions
-        for (let i = 0; i < this.enemies.length; i++)
+        if(!this.gameover)
         {
-            let collision = this.enemies[i].CheckPlayerCollision(player.position);
+            // Update
+            this.player.update(deltaTime);
 
-            if (collision)
+            this.enemies.forEach(enemy => {
+                enemy.Update(deltaTime);
+            });
+
+            // check bullets-enemies or player-enemies collisions
+            for (let i = 0; i < this.enemies.length; i++)
             {
-        
-                let enemyDead = this.enemies[i].Damage(this.player.damageOnCollision);
-                if (enemyDead)
+                let collision = this.enemies[i].CheckPlayerCollision(player.position);
+
+                if (collision)
                 {
-                    --this.player.life;
-                    console.log("Impacto player, vida = " + this.player.life);
-                    this.GenerateEnemies(i);
-                    if (this.player.life == 0)
+            
+                    let enemyDead = this.enemies[i].Damage(this.player.damageOnCollision);
+                    if (enemyDead)
                     {
-                        alert("Has muerto pero no hay Game Over lol!");
-                        window.location.reload();
-                    }
-                    return;
-                }
-            }
-
-            for (let j = 0; j < this.player.bulletPool.bullets.length; j++)
-            {
-                let bullet = this.player.bulletPool.bullets[j];
-
-                if (bullet.active)
-                {
-                    let collision = this.enemies[i].CheckBulletCollision(bullet.position);
-
-                    if (collision)
-                    {
-                        // bullet 'j' has collide with enemy 'i'
-                        // damage the enemy
-                        let enemyDead = this.enemies[i].Damage(bullet.power);
-
-                        // disable the bullet
-                        this.player.bulletPool.Deactivate(bullet);
-                        console.log("Impacto bala");
+                        --this.player.life;
+                        console.log("Impacto player, vida = " + this.player.life);
                         
-                        // kill enemies, spawn more if enemies list = 0
-                        if (enemyDead)
+                        if (this.player.life == 0)
                         {
-                            this.score += this.enemies[i].scoreValue;
-                            this.GenerateEnemies(i);
-                            return;
+                            //alert("Has muerto pero no hay Game Over lol!");
+                            //window.location.reload();
+        
+                            document.getElementById("gamescore").innerText = this.score;
+                            this.gameover = true;
+                            GameOver();
+                        }
+                        
+                        this.GenerateEnemies(i);
+                        
+                        return;
+                    }
+                }
+
+                for (let j = 0; j < this.player.bulletPool.bullets.length; j++)
+                {
+                    let bullet = this.player.bulletPool.bullets[j];
+
+                    if (bullet.active)
+                    {
+                        let collision = this.enemies[i].CheckBulletCollision(bullet.position);
+
+                        if (collision)
+                        {
+                            // bullet 'j' has collide with enemy 'i'
+                            // damage the enemy
+                            let enemyDead = this.enemies[i].Damage(bullet.power);
+
+                            // disable the bullet
+                            this.player.bulletPool.Deactivate(bullet);
+                            console.log("Impacto bala");
+                            
+                            // kill enemies, spawn more if enemies list = 0
+                            if (enemyDead)
+                            {
+                                this.score += this.enemies[i].scoreValue;
+                                this.GenerateEnemies(i);
+                                return;
+                            }
                         }
                     }
-                }
+                }  
             }
-            
         }
     },
 
@@ -94,7 +104,7 @@ var game = {
         console.log("N enemigos: " + this.enemies.length);
         if (this.enemies.length == 0)
         {
-            var rng = Math.round(randomBetween(2, 5));
+            var rng = Math.round(randomBetween(2, 4)) + Math.round(this.score/200);
             var rngX;
             var rngY;
             
@@ -111,7 +121,6 @@ var game = {
                 this.enemies.push(new Enemy(new Vector2(rngX, rngY)));
             }
             this.enemies.forEach(enemy => enemy.Start());
-            //alert("congratulations monster!");
         }
     },
 
@@ -124,34 +133,37 @@ var game = {
         ctx.fillStyle = this.bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // draw the player
-        this.player.draw(ctx);
-
-        // draw the enemies
-        this.enemies.forEach(enemy => {
-            enemy.Draw(ctx);
-        });
-
-        // draw the aiming point
-        ctx.drawImage(graphicAssets.aim.image, Input.mouse.x - graphicAssets.aim.image.width / 2, Input.mouse.y - graphicAssets.aim.image.height / 2);
-
-        // draw life
-        for(let i = 0, anchor = graphicAssets.heart.image.width + 5; i < this.player.life / 2; i++)
+        if(!this.gameover)
         {
-            if (Math.trunc(this.player.life / 2) >= i + 1)
-            ctx.drawImage(graphicAssets.heart.image, 15 + anchor * i, 10);
-            else
-            ctx.drawImage(graphicAssets.halfheart.image, 15 + anchor * i, 10);
+            // draw the player
+            this.player.draw(ctx);
+
+            // draw the enemies
+            this.enemies.forEach(enemy => {
+                enemy.Draw(ctx);
+            });
+
+            // draw the aiming point
+            ctx.drawImage(graphicAssets.aim.image, Input.mouse.x - graphicAssets.aim.image.width / 2, Input.mouse.y - graphicAssets.aim.image.height / 2);
+
+            // draw life
+            for(let i = 0, anchor = graphicAssets.heart.image.width + 5; i < this.player.life / 2; i++)
+            {
+                if (Math.trunc(this.player.life / 2) >= i + 1)
+                ctx.drawImage(graphicAssets.heart.image, 15 + anchor * i, 10);
+                else
+                ctx.drawImage(graphicAssets.halfheart.image, 15 + anchor * i, 10);
+            }
+
+            // Corazones vacios hardcodeados, no me gusta este approach
+            if (this.player.life < 5) ctx.drawImage(graphicAssets.emptyheart.image, 15 + (graphicAssets.heart.image.width + 5) * 2, 10);
+            if (this.player.life < 3) ctx.drawImage(graphicAssets.emptyheart.image, 15 + graphicAssets.heart.image.width + 5, 10);
+            if (this.player.life < 1) ctx.drawImage(graphicAssets.emptyheart.image, 15, 10);
+
+            ctx.fillStyle = "white";
+            ctx.font = "24px Courier"
+            ctx.fillText("Score: " + this.score, canvas.width/2 + 50, 42);
         }
-
-        // Corazones vacios hardcodeados, no me gusta este approach
-        if (this.player.life < 5) ctx.drawImage(graphicAssets.emptyheart.image, 15 + (graphicAssets.heart.image.width + 5) * 2, 10);
-        if (this.player.life < 3) ctx.drawImage(graphicAssets.emptyheart.image, 15 + graphicAssets.heart.image.width + 5, 10);
-        if (this.player.life < 1) ctx.drawImage(graphicAssets.emptyheart.image, 15, 10);
-
-        ctx.fillStyle = "white";
-        ctx.font = "24px Courier"
-        ctx.fillText("Score: " + this.score, canvas.width/2 + 50, 42);
     }
 
 }

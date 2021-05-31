@@ -18,6 +18,16 @@
 <body>
     <div id="container">
         <canvas id="myCanvas" width="500" height="720"></canvas>
+        <div id="gameover">
+            <div id="finalScore">
+                <div>
+                    <p>Final Score: <span id="gamescore">0</span></p>
+                    <p> </p>
+                </div>
+            </div>
+            <div class="menuButton" id="retryButton">Retry?</div>
+            
+        </div>
         <div id="menu">
             <div class="menuButton" id="startButton">Start</div>
             <div class="menuButton" id="creditsButton">Credits</div>
@@ -32,6 +42,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
     <audio id="laserSound" src="assets/laser.wav" style="display: none;"></audio>
 </body>

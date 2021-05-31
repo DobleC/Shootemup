@@ -92,6 +92,7 @@ function BodyLoaded()
     SetupKeyboardEvents();
     SetupMouseEvents();
     InitMainMenu();
+    InitGameOver();
 
 }
 
@@ -129,6 +130,18 @@ function InitMainMenu() {
     }
 }
 
+function InitGameOver() {
+    const retryButton = document.getElementById("retryButton");
+    const gameover = document.getElementById("gameover");
+    
+    gameover.style.left = "+" + menu.clientWidth + "px";
+
+    retryButton.onclick  = function() {
+        window.location.reload();
+    };
+    
+}
+
 function HideMenuAndStart()
 {
     menu.style.left = "-" + menu.clientWidth + "px";
@@ -144,6 +157,11 @@ function HideMenuAndStart()
         time = Date.now();
         Loop();
     })
+}
+
+function GameOver()
+{
+    gameover.style.left = 0;
 }
 
 function Loop()
@@ -201,10 +219,12 @@ function Draw(ctx)
     game.Draw(ctx);
 
     // draw FPS data
+    /*
     ctx.fillStyle = "white";
     ctx.font = "12px Comic Sans MS"
     ctx.fillText("frames=" + currentFramesCounter, 10, 630+20);
     ctx.fillText("deltaTime=" + deltaTime, 10, 630+36);
     ctx.fillText("current FPS=" + (1 / deltaTime).toFixed(2), 10, 630+52);
     ctx.fillText("last second FPS=" + lastFramesCounter, 10, 630+68);
+    */
 }
