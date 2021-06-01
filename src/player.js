@@ -6,6 +6,7 @@ var player = {
     rotation: 0,
 
     img: null,
+    animation: null,
 
     halfWidth: 0,
     halfHeight: 0,
@@ -23,9 +24,17 @@ var player = {
         this.position = position;
 
         this.img = graphicAssets.player_ship.image;
-
-        this.width = this.img.width;
-        this.height = this.img.height;
+        
+        this.animation = new SSAnimation(
+            graphicAssets.nave.image,
+            26*2, // frameWidth
+            42*2, // frameHeight
+            [1,1,1], // frameCount
+        );
+        
+        this.animation.PlayAnimation(0);
+        this.width = 26*2;
+        this.height = 42*2;
         this.halfWidth = this.width / 2;
         this.halfHeight = this.height / 2;
 
@@ -35,7 +44,7 @@ var player = {
         this.life = 6;
         this.damageOnCollision = 5;
 
-        this.bulletPool = new BulletPool(5);
+        this.bulletPool = new BulletPool(5, 0);
 
         this.collider = {
             originalPolygon : [
@@ -50,23 +59,44 @@ var player = {
 
         for (let i = 0; i < this.collider.originalPolygon.length; i++)
         this.collider.transformedPolygon[i] = {x: 0, y: 0};
-
     },
 
     update: function(deltaTime) {
+
         this.shotRateAux += deltaTime;
+
+        this.animation.Update(deltaTime);
+
+        this.animation.PlayAnimation(0);
 
         // movement
         let dir = Vector2.Zero();
 
         if ((Input.IsKeyPressed(KEY_LEFT) || Input.IsKeyPressed(KEY_A)) && this.position.x > this.width)
-            dir.x = -1;
+        {
+            dir.x = -1; 
+            if(this.rotation > -Math.PI/4 && this.rotation < Math.PI/4) this.animation.PlayAnimation(1);
+            if(this.rotation > Math.PI*3/4 && this.rotation < Math.PI*5/4) this.animation.PlayAnimation(2);
+        }
         if ((Input.IsKeyPressed(KEY_RIGHT) || Input.IsKeyPressed(KEY_D)) && this.position.x < canvas.width - this.width)
-            dir.x = 1;
+        {
+            dir.x = 1; 
+            if(this.rotation > -Math.PI/4 && this.rotation < Math.PI/4) this.animation.PlayAnimation(2);
+            if(this.rotation > Math.PI*3/4 && this.rotation < Math.PI*5/4) this.animation.PlayAnimation(1);
+        }
         if ((Input.IsKeyPressed(KEY_UP) || Input.IsKeyPressed(KEY_W)) && this.position.y > this.height)
+        {
             dir.y = -1;
+            if(this.rotation >= Math.PI*5/4 || this.rotation <= -Math.PI/4) this.animation.PlayAnimation(2);
+            if(this.rotation >= Math.PI/4 && this.rotation <= Math.PI*3/4) this.animation.PlayAnimation(1);
+                
+        }
         if ((Input.IsKeyPressed(KEY_DOWN) || Input.IsKeyPressed(KEY_S)) && this.position.y < canvas.height - this.height)
+        {
             dir.y = 1;
+            if(this.rotation >= Math.PI*5/4 || this.rotation <= -Math.PI/4) this.animation.PlayAnimation(1);
+            if(this.rotation >= Math.PI/4 && this.rotation <= Math.PI*3/4) this.animation.PlayAnimation(2);
+        }
 
         // turbo movement
         let currentSpeed = this.speed;
@@ -99,7 +129,7 @@ var player = {
             let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
             if (bullet) {
                 audio.laser.currentTime = 0.1;
-                //audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 this.shotRateAux = 0;
             }
         }
@@ -118,8 +148,9 @@ var player = {
 
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
+        this.animation.Draw(ctx);
 
-        ctx.drawImage(this.img, -this.halfWidth, -this.halfHeight, this.width, this.height);
+        //ctx.drawImage(this.img, -this.halfWidth, -this.halfHeight, this.width, this.height);
 
         ctx.restore();
         
@@ -146,3 +177,15 @@ var player = {
         
     }
 }
+
+
+/*//idle
+        //this.animation = new SSAnimation(graphicAssets.braid.image, 83, 140, [12, 11, 9, 9, 8], 1 / 12);
+        this.animation = new SSAnimation(
+            graphicAssets.knight.image,
+            79, // frameWidth
+            63, // frameHeight
+            [14, 13, 14, 10, 2, 5, 6, 4, 4, 6, 4, 2, 8], // frameCount
+            1/12
+        );
+        this.animation.PlayAnimationLoop(12);*/

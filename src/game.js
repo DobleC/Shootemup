@@ -20,7 +20,7 @@ var game = {
         this.player = player;
         this.player.start(new Vector2(canvas.width / 2, canvas.height - 60));
 
-        this.enemyBullets = new BulletPool(10);
+        this.enemyBullets = new BulletPool(10, 1);
 
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
@@ -34,8 +34,6 @@ var game = {
         {
             if(currentFramesCounter == 59) this.score++;
 
-            this.enemyBullets.Update(deltaTime);
-
             // Update
             this.player.update(deltaTime);
 
@@ -43,9 +41,11 @@ var game = {
                 enemy.Update(deltaTime);
             });
 
-            for (let j = 0; j < this.enemyBullets.bullets.length; j++)
+            this.enemyBullets.Update(deltaTime);
+
+            for (let b = 0; b < this.enemyBullets.bullets.length; b++)
                 {
-                    let bullet = this.enemyBullets.bullets[j];
+                    let bullet = this.enemyBullets.bullets[b];
 
                     if (bullet.active)
                     {
@@ -198,6 +198,7 @@ var game = {
             ctx.fillStyle = "white";
             ctx.font = "24px Courier"
             ctx.fillText("Score: " + this.score, canvas.width/2 + 50, 42);
+           
         }
     }
 

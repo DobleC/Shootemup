@@ -1,10 +1,11 @@
 
 class Bullet {
-    constructor(position, rotation, speed, power) {
+    constructor(position, rotation, speed, power, shotType) {
         this.position = position;
         this.rotation = rotation;
         this.speed = speed;
         this.power = power;
+        this.shotType = shotType;
         this.active = false;
     }
 
@@ -19,19 +20,27 @@ class Bullet {
 
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
-
-        ctx.fillRect(-3, -1, 6, 2);
-
+        
+        if(debug) ctx.fillRect(-3, -1, 6, 2);
+        else switch(this.shotType)
+        {
+            case 0: ctx.drawImage(graphicAssets.bullet.image, -graphicAssets.bullet.image.width/2, -graphicAssets.bullet.image.height/2);
+                break;
+            
+            case 1: ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
+                break;
+        }
+        
         ctx.restore();
     }
 }
 
 class BulletPool {
-    constructor(initialSize) {
+    constructor(initialSize, shotType) {
         this.bullets = [];
 
         for (let i = 0; i < initialSize; i++) {
-            let bullet = new Bullet(new Vector2(0, 0), 0, 0, 0);
+            let bullet = new Bullet(new Vector2(0, 0), 0, 0, 0, shotType);
             this.bullets.push(bullet);
         }
     }

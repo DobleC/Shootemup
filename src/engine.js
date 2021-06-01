@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 
 var canvas = null;
 var ctx = null;
@@ -47,8 +47,16 @@ var graphicAssets = {
         path: "assets/baoyzx.png",
         image: null
     },
-    misil: {
-        path: "assets/misil.png",
+    nave: {
+        path: "assets/nave.png",
+        image: null
+    },
+    bullet: {
+        path: "assets/bullet.png",
+        image: null
+    },
+    energy: {
+        path: "assets/energy.png",
         image: null
     },
     aim: {
