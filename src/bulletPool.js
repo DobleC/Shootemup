@@ -7,14 +7,62 @@ class Bullet {
         this.power = power;
         this.shotType = shotType;
         this.active = false;
+
+        this.collider = {
+            originalPolygon : [
+                {x: -12.5, y: -12.5},
+                {x: -12.5, y: 12.5},
+                {x: 12.5, y: 12.5},
+                {x: 12.5, y: -12.5},
+            ],
+            transformedPolygon : []
+        };
+    }
+
+    Start()
+    {
+        for (let i = 0; i < this.collider.originalPolygon.length; i++)
+            this.collider.transformedPolygon[i] = {x: 0, y: 0};
     }
 
     Update (deltaTime) {
         this.position.x += Math.cos(this.rotation) * this.speed * deltaTime;
         this.position.y += Math.sin(this.rotation) * this.speed * deltaTime;
+
+        for (let i = 0; i < this.collider.originalPolygon.length; i++)
+        {
+            // 1: update the vertex position regarding the polygon position
+            this.collider.transformedPolygon[i].x =
+                this.position.x + this.collider.originalPolygon[i].x;
+            this.collider.transformedPolygon[i].y =
+                this.position.y + this.collider.originalPolygon[i].y;
+            // 2: update the vertex position regarding the polygon rotation
+           this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
+        }
     }
 
     Draw (ctx) {
+        
+        if(debug)
+        {
+            // draw the collider polygon
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            for (let i = 1; i < this.collider.transformedPolygon.length; i++)
+            {
+                ctx.lineTo(this.collider.transformedPolygon[i].x, this.collider.transformedPolygon[i].y);
+            }
+            ctx.lineTo(this.collider.transformedPolygon[0].x, this.collider.transformedPolygon[0].y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fill();
+        }
+        
+        
+        
         ctx.fillStyle = "yellow";
         ctx.save();
 
@@ -30,8 +78,13 @@ class Bullet {
             case 1: ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
                 break;
         }
-        
+
         ctx.restore();
+    }
+
+    CheckCollision(Position)
+    {
+        return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
     }
 }
 
@@ -41,6 +94,7 @@ class BulletPool {
 
         for (let i = 0; i < initialSize; i++) {
             let bullet = new Bullet(new Vector2(0, 0), 0, 0, 0, shotType);
+            bullet.Start();
             this.bullets.push(bullet);
         }
     }
@@ -63,18 +117,6 @@ class BulletPool {
             if (bullet.active)
                 bullet.Draw(ctx);
         });
-
-        // debug draw
-        /*ctx.fillStyle = "red";
-        ctx.strokeStyle = "white";
-        let x = canvas.width - 40;
-        let y = 20;
-        for (let i = 0; i < this.bullets.length; i++) {
-            if (this.bullets[i].active) {
-                ctx.fillRect(x, (i * 20) + y, 20, 20);
-            }
-            ctx.strokeRect(x, (i * 20) + y, 20, 20);
-        };*/
     }
 
     Activate(x, y, rotation, speed, power) {

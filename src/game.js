@@ -4,7 +4,7 @@ var game = {
     enemies: [],
     score: 0,
     gameover: false,
-    //enemyBullets,
+    bgy: 0,
 
     Start: function()
     {
@@ -20,6 +20,9 @@ var game = {
         this.player = player;
         this.player.start(new Vector2(canvas.width / 2, canvas.height - 60));
 
+        this.secs = 0;
+        this.maxsecs = 1;
+
         this.enemyBullets = new BulletPool(10, 1);
 
         // init the enemies
@@ -32,7 +35,13 @@ var game = {
     {
         if(!this.gameover)
         {
-            if(currentFramesCounter == 59) this.score++;
+            // +1 punto cada sec
+            this.secs += deltaTime;
+            if (this.secs >= this.maxsecs) 
+            {
+                this.score++;
+                this.secs = 0;
+            }
 
             // Update
             this.player.update(deltaTime);
@@ -45,15 +54,30 @@ var game = {
 
             for (let b = 0; b < this.enemyBullets.bullets.length; b++)
                 {
-                    let bullet = this.enemyBullets.bullets[b];
+                    let enembullet = this.enemyBullets.bullets[b];
 
-                    if (bullet.active)
+                    if (enembullet.active)
                     {
-                        let collision = this.player.CheckCollision(bullet.position);
+                        if(player.shieldbullet)
+                        {
+                            for (let p = 0; p < this.player.bulletPool.bullets.length; p++)
+                            {
+                                let playerbullet = this.player.bulletPool.bullets[p];
+                                
+                                if(playerbullet.active && playerbullet.CheckCollision(enembullet.position))
+                                {
+                                    this.player.bulletPool.Deactivate(playerbullet);
+                                    this.enemyBullets.Deactivate(enembullet);
+                                    //////////////////////////////////////////////////////////////////////
+                                }
+                            }
+                        }
+
+                        let collision = this.player.CheckCollision(enembullet.position);
 
                         if (collision)
                         {
-                            this.enemyBullets.Deactivate(bullet);
+                            this.enemyBullets.Deactivate(enembullet);
                             this.playerHitted();
                         }
                     }
@@ -75,7 +99,6 @@ var game = {
 
                 if (collision)
                 {
-            
                     let enemyDead = this.enemies[i].Damage(this.player.damageOnCollision);
                     if (enemyDead)
                     { 
@@ -107,6 +130,7 @@ var game = {
                             if (enemyDead)
                             {
                                 this.score += this.enemies[i].scoreValue;
+                                this.ExplosionSound();
                                 this.GenerateEnemies(i);
                                 return;
                             }
@@ -118,8 +142,8 @@ var game = {
     },
 
     playerHitted: function()
-    {
-        --this.player.life;
+    { 
+        this.player.GetHitted();
         console.log("Impacto en player, vida = " + this.player.life);
         
         if (this.player.life == 0)
@@ -130,16 +154,30 @@ var game = {
         }
     },
 
+
+    ExplosionSound: function()
+    {
+        let explType = Math.round(randomBetween(0.51, 3.49));
+
+        switch (explType)
+        {
+            case 1: audio.expl1.currentTime = 0.005; audio.expl1.play(); break;
+            case 2: audio.expl2.currentTime = 0.005; audio.expl2.play(); break;
+            case 3: audio.expl3.currentTime = 0.005; audio.expl3.play(); break;
+        }
+    },
+
     GenerateEnemies: function(i)
     {
         
         RemoveElementAt(this.enemies, i);
+
         console.log("N enemigos: " + this.enemies.length);
         if (this.enemies.length == 0)
         {
-            var rng = Math.round(randomBetween(2, 4)) + Math.round(this.score/200);
-            var rngX;
-            var rngY;
+            let rng = Math.round(randomBetween(2, 4)) + Math.round(this.score/200);
+            let rngX;
+            let rngY;
             
 
             console.log("Generando enemigos: " + rng)
@@ -165,6 +203,11 @@ var game = {
         // background gradient
         ctx.fillStyle = this.bgGradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(graphicAssets.bg.image, 0, this.bgy - graphicAssets.bg.image.height + canvas.height);
+        ++this.bgy;
+        if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
+        //////////////////////////////////////////////////////////////////////////////////////7
 
         if(!this.gameover)
         {

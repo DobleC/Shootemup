@@ -1,4 +1,3 @@
-
 var player = {
     position: null,
     width: 0,
@@ -14,10 +13,9 @@ var player = {
     speed: 400,
     speedTurboMultiplier: 1.5,
 
-    shotRate: 0.15,
+    shotRate: 0.2,
     shotRateAux: 0.2,
 
-    
     bulletPool: null,
 
     start: function(position) {
@@ -46,12 +44,19 @@ var player = {
 
         this.bulletPool = new BulletPool(5, 0);
 
+        this.secs = 0;
+        this.maxsecs = 3;
+        this.siono = false;
+        this.hitted = false;
+
+        this.shieldbullet = false;
+
         this.collider = {
             originalPolygon : [
-                {x: -10, y: -15},
-                {x: -10, y: 15},
-                {x: 10, y: 15},
-                {x: 10, y: -15},
+                {x: -15, y: -25},
+                {x: -15, y: 25},
+                {x: 15, y: 25},
+                {x: 15, y: -25},
     
             ],
             transformedPolygon : []
@@ -62,7 +67,6 @@ var player = {
     },
 
     update: function(deltaTime) {
-
         this.shotRateAux += deltaTime;
 
         this.animation.Update(deltaTime);
@@ -128,11 +132,23 @@ var player = {
         {
             let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
             if (bullet) {
-                audio.laser.currentTime = 0.1;
-                audio.laser.play();  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                audio.laser.currentTime = 0.005;
+                audio.laser.play(); 
                 this.shotRateAux = 0;
             }
         }
+
+        // Cuenta los segundos de invulnerabilidad del player
+        if(this.hitted)
+        {
+            this.secs += deltaTime;
+            if (this.secs >= this.maxsecs) 
+            {
+                this.hitted = false;
+                this.secs = 0;
+            }
+        }
+
 
         // update the bullets
         this.bulletPool.Update(deltaTime);
@@ -143,12 +159,36 @@ var player = {
         return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
     },
 
+    GetHitted()
+    {
+        // Recibe daño si no ha recibido daño en x segundos
+        if(!this.hitted)
+        {
+            audio.hurt.currentTime = 0.005;
+            audio.hurt.play();
+            this.hitted = true;
+            //setTimeout(function(){this.hitted = false}.bind(this), 5000);
+            --this.life;
+        }
+    },
+
     draw: function(ctx) {
         ctx.save();
 
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
-        this.animation.Draw(ctx);
+        
+        // Parpadea si es invulnerable
+        if (this.hitted)
+        {
+            if(this.siono)
+            {
+                this.animation.Draw(ctx);
+                this.siono = false;
+            }
+            else this.siono = true;
+        }
+        else this.animation.Draw(ctx);
 
         //ctx.drawImage(this.img, -this.halfWidth, -this.halfHeight, this.width, this.height);
 
@@ -177,15 +217,3 @@ var player = {
         
     }
 }
-
-
-/*//idle
-        //this.animation = new SSAnimation(graphicAssets.braid.image, 83, 140, [12, 11, 9, 9, 8], 1 / 12);
-        this.animation = new SSAnimation(
-            graphicAssets.knight.image,
-            79, // frameWidth
-            63, // frameHeight
-            [14, 13, 14, 10, 2, 5, 6, 4, 4, 6, 4, 2, 8], // frameCount
-            1/12
-        );
-        this.animation.PlayAnimationLoop(12);*/

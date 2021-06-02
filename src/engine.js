@@ -59,6 +59,10 @@ var graphicAssets = {
         path: "assets/energy.png",
         image: null
     },
+    bg: {
+        path: "assets/bg.png",
+        image: null
+    },
     aim: {
         path: "assets/aim.png",
         image: null
@@ -157,7 +161,14 @@ function HideMenuAndStart()
 
     LoadImages(graphicAssets, function() {
         // load audio
-        audio.laser = document.getElementById("laserSound");
+        audio.laser = document.getElementById("laser");
+        
+        //Explosiones
+        audio.expl1 = document.getElementById("expl1");
+        audio.expl2 = document.getElementById("expl2");
+        audio.expl3 = document.getElementById("expl3");
+
+        audio.hurt = document.getElementById("hurt");
 
         // Start the game
         game.Start();
@@ -223,7 +234,7 @@ function Loop()
 function Draw(ctx)
 {
     // draw the game level
-    game.Draw(ctx);
+   game.Draw(ctx);
 
     if(debug)
     {
