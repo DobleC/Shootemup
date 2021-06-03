@@ -72,7 +72,7 @@ class PowerUp
 
         ctx.restore();
 
-        if(!debug)
+        if(debug)
         {
             // draw the collider polygon
             ctx.strokeStyle = "red";
