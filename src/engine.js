@@ -1,5 +1,4 @@
 var debug = false;
-
 var canvas = null;
 var ctx = null;
 
@@ -43,10 +42,6 @@ var graphicAssets = {
         path: "assets/emptyheart.png",
         image: null
     },
-    player_ship: {
-        path: "assets/baoyzx.png",
-        image: null
-    },
     nave: {
         path: "assets/nave.png",
         image: null
@@ -55,12 +50,24 @@ var graphicAssets = {
         path: "assets/bullet.png",
         image: null
     },
+    shieldbullet: {
+        path: "assets/holybullet.png",
+        image: null
+    },
     energy: {
         path: "assets/energy.png",
         image: null
     },
     bg: {
         path: "assets/bg.png",
+        image: null
+    },
+    pulife: {
+        path: "assets/PULife.png",
+        image: null
+    },
+    puspeed: {
+        path: "assets/PUSpeed.png",
         image: null
     },
     aim: {
@@ -169,6 +176,8 @@ function HideMenuAndStart()
         audio.expl3 = document.getElementById("expl3");
 
         audio.hurt = document.getElementById("hurt");
+
+        audio.powerup = document.getElementById("powerup");
 
         // Start the game
         game.Start();

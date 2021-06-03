@@ -26,18 +26,22 @@ class Bullet {
     }
 
     Update (deltaTime) {
-        this.position.x += Math.cos(this.rotation) * this.speed * deltaTime;
-        this.position.y += Math.sin(this.rotation) * this.speed * deltaTime;
-
-        for (let i = 0; i < this.collider.originalPolygon.length; i++)
+        
+        if(this.active)
         {
-            // 1: update the vertex position regarding the polygon position
-            this.collider.transformedPolygon[i].x =
-                this.position.x + this.collider.originalPolygon[i].x;
-            this.collider.transformedPolygon[i].y =
-                this.position.y + this.collider.originalPolygon[i].y;
-            // 2: update the vertex position regarding the polygon rotation
-           this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
+            this.position.x += Math.cos(this.rotation) * this.speed * deltaTime;
+            this.position.y += Math.sin(this.rotation) * this.speed * deltaTime;
+
+            for (let i = 0; i < this.collider.originalPolygon.length; i++)
+            {
+                // 1: update the vertex position regarding the polygon position
+                this.collider.transformedPolygon[i].x =
+                    this.position.x + this.collider.originalPolygon[i].x;
+                this.collider.transformedPolygon[i].y =
+                    this.position.y + this.collider.originalPolygon[i].y;
+                // 2: update the vertex position regarding the polygon rotation
+                this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
+            }
         }
     }
 
@@ -72,7 +76,8 @@ class Bullet {
         if(debug) ctx.fillRect(-3, -1, 6, 2);
         else switch(this.shotType)
         {
-            case 0: ctx.drawImage(graphicAssets.bullet.image, -graphicAssets.bullet.image.width/2, -graphicAssets.bullet.image.height/2);
+            case 0: 
+                this.PlayerShot();
                 break;
             
             case 1: ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
@@ -80,6 +85,16 @@ class Bullet {
         }
 
         ctx.restore();
+    }
+
+    PlayerShot()
+    {
+        // Bala normal o shield
+        let shot = null;
+        if(player.shieldbullet) shot = graphicAssets.shieldbullet.image;
+        else shot = graphicAssets.bullet.image;
+        
+        ctx.drawImage(shot, -shot.width/2, -shot.height/2);  
     }
 
     CheckCollision(Position)
@@ -139,6 +154,7 @@ class BulletPool {
         if (!newBullet) {
             // no non-active bullet found, create a new one
             newBullet = new Bullet(new Vector2(x, y), rotation, speed, power);
+            newBullet.Start();
             this.bullets.push(newBullet);
         }
 
@@ -149,4 +165,5 @@ class BulletPool {
     Deactivate(bullet) {
         bullet.active = false;
     }
+
 }

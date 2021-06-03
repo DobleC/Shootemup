@@ -2,6 +2,7 @@ var game = {
     bgGradient: null,
     player: null,
     enemies: [],
+    powerups: [],
     score: 0,
     gameover: false,
     bgy: 0,
@@ -23,7 +24,7 @@ var game = {
         this.secs = 0;
         this.maxsecs = 1;
 
-        this.enemyBullets = new BulletPool(10, 1);
+        this.enemyBullets = new BulletPool(20, 1);
 
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
@@ -50,10 +51,14 @@ var game = {
                 enemy.Update(deltaTime);
             });
 
+            this.powerups.forEach(powerup => {
+                powerup.Update(deltaTime);
+            });
+
             this.enemyBullets.Update(deltaTime);
 
             for (let b = 0; b < this.enemyBullets.bullets.length; b++)
-                {
+            {
                     let enembullet = this.enemyBullets.bullets[b];
 
                     if (enembullet.active)
@@ -81,7 +86,7 @@ var game = {
                             this.playerHitted();
                         }
                     }
-                }  
+            }  
 
 
             // check bullets-enemies or player-enemies collisions
@@ -131,12 +136,35 @@ var game = {
                             {
                                 this.score += this.enemies[i].scoreValue;
                                 this.ExplosionSound();
+                                this.GeneratePUP(i);
                                 this.GenerateEnemies(i);
                                 return;
                             }
                         }
                     }
                 }  
+            }
+            
+            // check power ups - player collisions
+            for (let i = 0; i < this.powerups.length; i++)
+            {
+                if(this.powerups[i].position.y > canvas.height + 10)
+                {
+                    RemoveElementAt(this.powerups, i);
+                    return;
+                }
+
+
+                let collision = this.player.CheckCollision(this.powerups[i].position);
+
+                if (collision)
+                {
+                    this.powerups[i].doEffect(this.player);
+                    audio.powerup.currentTime = 0.005;
+                    audio.powerup.play(); 
+                    RemoveElementAt(this.powerups, i);
+                    return;
+                }
             }
         }
     },
@@ -167,15 +195,25 @@ var game = {
         }
     },
 
+    GeneratePUP: function(i)
+    {
+        let pUP = new PowerUp(this.enemies[i].position);
+        pUP.Start();
+        this.powerups.push(pUP);
+    },
+
     GenerateEnemies: function(i)
     {
-        
         RemoveElementAt(this.enemies, i);
 
         console.log("N enemigos: " + this.enemies.length);
         if (this.enemies.length == 0)
         {
-            let rng = Math.round(randomBetween(2, 4)) + Math.round(this.score/200);
+            let masEnems = 0;
+            if (this.score < 2000) masEnems = Math.round(this.score/200);
+            else masEnems = 10;
+
+            let rng = Math.round(randomBetween(2, 4)) + masEnems;
             let rngX;
             let rngY;
             
@@ -217,6 +255,10 @@ var game = {
             // draw the enemies
             this.enemies.forEach(enemy => {
                 enemy.Draw(ctx);
+            });
+
+            this.powerups.forEach(powerup => {
+                powerup.Draw(ctx);
             });
 
             this.enemyBullets.Draw(ctx);

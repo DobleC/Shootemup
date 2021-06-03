@@ -4,14 +4,14 @@ var player = {
     height: 0,
     rotation: 0,
 
-    img: null,
+    //img: null,
     animation: null,
 
     halfWidth: 0,
     halfHeight: 0,
 
     speed: 400,
-    speedTurboMultiplier: 1.5,
+    //speedTurboMultiplier: 1.5,
 
     shotRate: 0.2,
     shotRateAux: 0.2,
@@ -21,7 +21,7 @@ var player = {
     start: function(position) {
         this.position = position;
 
-        this.img = graphicAssets.player_ship.image;
+        //this.img = graphicAssets.player_ship.image;
         
         this.animation = new SSAnimation(
             graphicAssets.nave.image,
@@ -42,14 +42,17 @@ var player = {
         this.life = 6;
         this.damageOnCollision = 5;
 
-        this.bulletPool = new BulletPool(5, 0);
+        this.bulletPool = new BulletPool(30, 0);
 
         this.secs = 0;
         this.maxsecs = 3;
         this.siono = false;
         this.hitted = false;
 
+        // Power ups
         this.shieldbullet = false;
+        this.tripleshot = false;
+        this.backshot = false;
 
         this.collider = {
             originalPolygon : [
@@ -102,16 +105,10 @@ var player = {
             if(this.rotation >= Math.PI/4 && this.rotation <= Math.PI*3/4) this.animation.PlayAnimation(2);
         }
 
-        // turbo movement
-        let currentSpeed = this.speed;
-        if (Input.IsKeyPressed(KEY_LSHIFT))
-            currentSpeed *= this.speedTurboMultiplier;
-
-        //dir.x = Input.mouse.x - this.position.x;
-        //dir.y = Input.mouse.y - this.position.y;
+        
         dir.Normalize();
-        this.position.x += dir.x * currentSpeed * deltaTime;
-        this.position.y += dir.y * currentSpeed * deltaTime;
+        this.position.x += dir.x * this.speed * deltaTime;
+        this.position.y += dir.y * this.speed * deltaTime;
 
         // rotation
         this.rotation = Math.atan2(Input.mouse.y - this.position.y, Input.mouse.x - this.position.x) + PIH;
@@ -130,12 +127,43 @@ var player = {
         // shot
         if ((Input.IsKeyPressed(KEY_SPACE) || Input.IsMousePressed()) && (this.shotRateAux >= this.shotRate))
         {
-            let bullet = this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
-            if (bullet) {
-                audio.laser.currentTime = 0.005;
-                audio.laser.play(); 
-                this.shotRateAux = 0;
+            if (this.tripleshot && !this.backshot)
+            {
+                // x = 1    y = 1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH/2, 800, 1);
+                // x = -1   y = 1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - Math.PI*5/7, 800, 1);
             }
+            else if (!this.tripleshot && this.backshot)
+            {
+                // x = 0   y = -1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation + PIH, 800, 1);
+            }
+            else if(this.tripleshot && this.backshot)
+            {
+                // x = 1   y = 1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH/2, 800, 1);
+                // x = -1  y = 1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - Math.PI*5/7, 800, 1);
+                
+                // x = 0   y = -1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation + PIH, 800, 1);
+
+                // x = 1   y = -1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation + PIH/2, 800, 1);
+                // x = -1  y = -1
+                this.bulletPool.Activate(this.position.x, this.position.y, this.rotation + Math.PI*5/7, 800, 1);
+
+            }
+            
+            // x = 0  y = 1
+            this.bulletPool.Activate(this.position.x, this.position.y, this.rotation - PIH, 800, 1);
+            
+
+            audio.laser.currentTime = 0.005;
+            audio.laser.play(); 
+            this.shotRateAux = 0;
+           
         }
 
         // Cuenta los segundos de invulnerabilidad del player
@@ -146,6 +174,7 @@ var player = {
             {
                 this.hitted = false;
                 this.secs = 0;
+                this.maxsecs = 3;
             }
         }
 
@@ -164,12 +193,58 @@ var player = {
         // Recibe daño si no ha recibido daño en x segundos
         if(!this.hitted)
         {
+            this.ResetStatus();
             audio.hurt.currentTime = 0.005;
             audio.hurt.play();
             this.hitted = true;
             //setTimeout(function(){this.hitted = false}.bind(this), 5000);
             --this.life;
         }
+    },
+
+    ResetStatus()
+    {
+        this.speed = 400;
+        this.shotRate = 0.2;
+        this.shieldbullet = false;
+        this.tripleshot = false;
+        this.backshot = false;
+    },
+
+    PowerUpLife()
+    {
+        for(let i = 0; i < 2; i++) if (this.life < 6) this.life++;   
+    },
+
+    PowerUpSpeed()
+    {
+        if (this.speed <= 700) this.speed += 50;   
+    },
+
+    PowerUpShootRate()
+    {
+        if (this.shotRate <= 0.1) this.shotRate -= 0.025;   
+    },
+
+    PowerUpShieldBullet()
+    {
+        if (!this.shieldbullet) this.shieldbullet = true;   
+    },
+
+    PowerUpTripleShot()
+    {
+        if (!this.tripleshot) this.tripleshot = true;   
+    },
+
+    PowerUpBackShot()
+    {
+        if (!this.backshot) this.backshot = true;   
+    },
+
+    PowerUpInvencible()
+    {
+        if (!this.hitted) this.hitted = true;  
+        this.maxsecs = 5; 
     },
 
     draw: function(ctx) {
