@@ -7,8 +7,8 @@ class PowerUp
         this.scale = 1;
         this.speed = 125;
 
-        this.effect = 1; //////////////////////////////////////////////////////////////////////////////////////////
-        this.img = graphicAssets.pulife.image; ///////////////////////////////////////////////////////////////////
+        this.effect = Math.round(randomBetween(0.51, 7.49));
+        this.img = graphicAssets.puspeed.image; ///////////////////////////////////////////////////////////////////
 
         this.width = this.img.width;
         this.height = this.img.height;

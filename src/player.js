@@ -213,38 +213,45 @@ var player = {
 
     PowerUpLife()
     {
-        for(let i = 0; i < 2; i++) if (this.life < 6) this.life++;   
+        for(let i = 0; i < 2; i++) if (this.life < 6) this.life++; 
+        console.log('Power Up Recover Life');  
     },
 
     PowerUpSpeed()
     {
-        if (this.speed <= 700) this.speed += 50;   
+        if (this.speed <= 700) this.speed += 50;
+        console.log('Power Up +Movement Speed');     
     },
 
     PowerUpShootRate()
     {
         if (this.shotRate <= 0.1) this.shotRate -= 0.025;   
+        console.log('Power Up +Shoot Rate');  
     },
 
     PowerUpShieldBullet()
     {
         if (!this.shieldbullet) this.shieldbullet = true;   
+        console.log('Power Up Shield Bullets');  
     },
 
     PowerUpTripleShot()
     {
-        if (!this.tripleshot) this.tripleshot = true;   
+        if (!this.tripleshot) this.tripleshot = true; 
+        console.log('Power Up Triple Shot');    
     },
 
     PowerUpBackShot()
     {
         if (!this.backshot) this.backshot = true;   
+        console.log('Power Up Back Shot');  
     },
 
     PowerUpInvencible()
     {
         if (!this.hitted) this.hitted = true;  
         this.maxsecs = 5; 
+        console.log('Power Up Invencible 5s');  
     },
 
     draw: function(ctx) {
