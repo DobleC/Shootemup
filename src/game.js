@@ -129,7 +129,7 @@ var game = {
 
                             // disable the bullet
                             this.player.bulletPool.Deactivate(bullet);
-                            console.log("Impacto a enemigo");
+                            //console.log("Impacto a enemigo");
                             
                             // kill enemies, spawn more if enemies list = 0
                             if (enemyDead)
@@ -172,7 +172,7 @@ var game = {
     playerHitted: function()
     { 
         this.player.GetHitted();
-        console.log("Impacto en player, vida = " + this.player.life);
+        //console.log("Impacto en player, vida = " + this.player.life);
         
         if (this.player.life == 0)
         {
@@ -206,7 +206,7 @@ var game = {
     {
         RemoveElementAt(this.enemies, i);
 
-        console.log("N enemigos: " + this.enemies.length);
+        //console.log("N enemigos: " + this.enemies.length);
         if (this.enemies.length == 0)
         {
             let masEnems = 0;
@@ -218,14 +218,14 @@ var game = {
             let rngY;
             
 
-            console.log("Generando enemigos: " + rng)
+            //console.log("Generando enemigos: " + rng)
 
             for (let i = 0; i < rng; i++)
             {
                 rngX = randomBetween(50, canvas.width - 50);
                 rngY = randomBetween(-20, -130);
 
-                console.log("Posicion enemigo" + i + " " + rngX + "," + rngY);
+                //console.log("Posicion enemigo" + i + " " + rngX + "," + rngY);
 
                 this.enemies.push(new Enemy(new Vector2(rngX, rngY)));
             }
