@@ -70,6 +70,26 @@ var graphicAssets = {
         path: "assets/PUSpeed.png",
         image: null
     },
+    pushield: {
+        path: "assets/PUShield.png",
+        image: null
+    },
+    putriple: {
+        path: "assets/PUTriple.png",
+        image: null
+    },
+    puinvencible: {
+        path: "assets/PUInvencible.png",
+        image: null
+    },
+    puback: {
+        path: "assets/PUBack.png",
+        image: null
+    },
+    purate: {
+        path: "assets/PURate.png",
+        image: null
+    },
     aim: {
         path: "assets/aim.png",
         image: null

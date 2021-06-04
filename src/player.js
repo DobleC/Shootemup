@@ -98,7 +98,7 @@ var player = {
             if(this.rotation >= Math.PI/4 && this.rotation <= Math.PI*3/4) this.animation.PlayAnimation(1);
                 
         }
-        if ((Input.IsKeyPressed(KEY_DOWN) || Input.IsKeyPressed(KEY_S)) && this.position.y < canvas.height - this.height)
+        if ((Input.IsKeyPressed(KEY_DOWN) || Input.IsKeyPressed(KEY_S)) && this.position.y < canvas.height - this.height + 30)
         {
             dir.y = 1;
             if(this.rotation >= Math.PI*5/4 || this.rotation <= -Math.PI/4) this.animation.PlayAnimation(1);

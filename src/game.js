@@ -24,7 +24,7 @@ var game = {
         this.secs = 0;
         this.maxsecs = 1;
 
-        this.enemyBullets = new BulletPool(20, 1);
+        this.enemyBullets = new BulletPool(14, 1);
 
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
@@ -197,9 +197,28 @@ var game = {
 
     GeneratePUP: function(i)
     {
-        let pUP = new PowerUp(this.enemies[i].position);
-        pUP.Start();
-        this.powerups.push(pUP);
+        let rng = 0.85;
+        if(this.score > 500)
+        {
+            rng = 0.8;
+
+            if (this.score > 1000)
+            {
+                rng = 0.75;
+                
+                if (this.score > 2000)
+                {
+                    rng = 0.7;
+                }
+            }
+        }
+
+        if (Math.random() >= rng)
+        {
+            let pUP = new PowerUp(this.enemies[i].position);
+            pUP.Start();
+            this.powerups.push(pUP);
+        }
     },
 
     GenerateEnemies: function(i)
@@ -245,7 +264,7 @@ var game = {
         ctx.drawImage(graphicAssets.bg.image, 0, this.bgy - graphicAssets.bg.image.height + canvas.height);
         ++this.bgy;
         if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
-        //////////////////////////////////////////////////////////////////////////////////////7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         if(!this.gameover)
         {

@@ -8,8 +8,38 @@ class PowerUp
         this.speed = 125;
 
         this.effect = Math.round(randomBetween(0.51, 7.49));
-        this.img = graphicAssets.puspeed.image; ///////////////////////////////////////////////////////////////////
-
+        this.img = null;
+        switch (this.effect)
+        {
+            case 1: 
+            this.img = graphicAssets.pulife.image; 
+                break;
+            
+            case 2: 
+            this.img = graphicAssets.puspeed.image; 
+                break;
+            
+            case 3: 
+            this.img = graphicAssets.purate.image;
+                break;
+                    
+            case 4: 
+            this.img = graphicAssets.pushield.image; 
+                break;
+            
+            case 5: 
+            this.img = graphicAssets.putriple.image;
+                break;
+                
+            case 6: 
+            this.img = graphicAssets.puback.image;
+                break;
+                
+            case 7: 
+            this.img = graphicAssets.puinvencible.image;
+                break;
+        }
+        
         this.width = this.img.width;
         this.height = this.img.height;
         this.halfWidth = this.img.width / 2;
