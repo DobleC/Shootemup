@@ -120,7 +120,7 @@ class Enemy
         }
 
         // Tira un dado de 100 caras cada frame y si sale 99 o 100 dispara (2%)
-        if(Math.random() >= 0.99)
+        if(Math.random() > 0.99)
         {
             MovementVector = new Vector2(player.position.x - this.position.x, player.position.y - this.position.y);
             this.rotation = Math.atan2(MovementVector.y, MovementVector.x);
