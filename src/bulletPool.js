@@ -4,6 +4,8 @@ class Bullet {
         this.position = position;
         this.rotation = rotation;
         this.speed = speed;
+        
+        // Daño que hacen las balas y tipo de disparo (0 -> disparo del player, 1 del enemigo)
         this.power = power;
         this.shotType = shotType;
         this.active = false;
@@ -47,6 +49,7 @@ class Bullet {
 
     Draw (ctx) {
         
+        // Pinta el collider si está en modo debug
         if(debug)
         {
             // draw the collider polygon
@@ -73,23 +76,25 @@ class Bullet {
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
         
+        // Pinta una balita sencilla en modo debug y el sprite correspondiente en modo normal
         if(debug) ctx.fillRect(-3, -1, 6, 2);
         else switch(this.shotType)
         {
-            case 0: 
+            case 0: // Disparo del player 
                 this.PlayerShot();
                 break;
             
-            case 1: ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
+            case 1: // Disparo enemigo
+                ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
                 break;
         }
 
         ctx.restore();
     }
 
+    // Cambia el sprite en función de si las balas para balas enemigas o no
     PlayerShot()
     {
-        // Bala normal o shield
         let shot = null;
         if(player.shieldbullet) shot = graphicAssets.shieldbullet.image;
         else shot = graphicAssets.bullet.image;
@@ -97,6 +102,7 @@ class Bullet {
         ctx.drawImage(shot, -shot.width/2, -shot.height/2);  
     }
 
+    // Checkea la posición
     CheckCollision(Position)
     {
         return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
@@ -105,8 +111,9 @@ class Bullet {
 
 class BulletPool {
     constructor(initialSize, shotType) {
+        
+        // Crea y rellena un array de bullets
         this.bullets = [];
-
         for (let i = 0; i < initialSize; i++) {
             let bullet = new Bullet(new Vector2(0, 0), 0, 0, 0, shotType);
             bullet.Start();
@@ -119,7 +126,7 @@ class BulletPool {
             if (bullet.active) {
                 bullet.Update(deltaTime);
 
-                // check scene bounds
+                // desactiva las balas si se salen del mapa
                 if (bullet.position.y < -3 || bullet.position.y > canvas.height + 3 ||
                     bullet.position.x < -1 || bullet.position.x > canvas.width + 1)
                     this.Deactivate(bullet);
@@ -127,6 +134,7 @@ class BulletPool {
         });
     }
 
+    // Dibuja las balas
     Draw(ctx) {
         this.bullets.forEach(bullet => {
             if (bullet.active)
@@ -162,6 +170,7 @@ class BulletPool {
         return newBullet;
     }
 
+    // Desactiva la bala
     Deactivate(bullet) {
         bullet.active = false;
     }

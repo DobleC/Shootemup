@@ -1,4 +1,5 @@
-var debug = false;
+var debug = false; // <- Modo Debug
+
 var canvas = null;
 var ctx = null;
 
@@ -128,7 +129,7 @@ function BodyLoaded()
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext("2d");
 
-    
+    // Setupead los eventos e inicia los menús de CSS
     SetupKeyboardEvents();
     SetupMouseEvents();
     InitMainMenu();
@@ -136,6 +137,7 @@ function BodyLoaded()
 
 }
 
+// Inicia el menú inicial y asocia funciones a sus botones
 function InitMainMenu() {
     const menuStartButton = document.getElementById("startButton");
     const menuCreditsButton = document.getElementById("creditsButton");
@@ -170,6 +172,7 @@ function InitMainMenu() {
     }
 }
 
+// Inicia el menú de gameover y asocia recargar la página a su botón de retry
 function InitGameOver() {
     const retryButton = document.getElementById("retryButton");
     const gameover = document.getElementById("gameover");
@@ -182,6 +185,7 @@ function InitGameOver() {
     
 }
 
+// Esconde el menú al pulsar play y carga las imágenes
 function HideMenuAndStart()
 {
     menu.style.left = "-" + menu.clientWidth + "px";
@@ -208,6 +212,7 @@ function HideMenuAndStart()
     })
 }
 
+// Invoca el menú de gameover
 function GameOver()
 {
     gameover.style.left = 0;
@@ -265,6 +270,7 @@ function Draw(ctx)
     // draw the game level
    game.Draw(ctx);
 
+   // Si está en modo debug, muestra datos de desarrollo
     if(debug)
     {
         // draw FPS data

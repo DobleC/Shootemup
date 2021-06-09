@@ -1,5 +1,4 @@
 var game = {
-    //bgGradient: null,
     player: null,
     enemies: [],
     powerups: [],
@@ -9,32 +8,25 @@ var game = {
 
     Start: function()
     {
-        /*// prepare the bg gradient
-        this.bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        this.bgGradient.addColorStop(1, "rgb(112, 162, 218)");
-        this.bgGradient.addColorStop(0.9494949494949495, "rgb(0, 122, 255)");
-        this.bgGradient.addColorStop(0.4292929292929293, "rgb(38, 71, 108)");
-        this.bgGradient.addColorStop(0.16161616161616163, "rgb(0, 0, 0)");
-        this.bgGradient.addColorStop(0, "rgb(1, 1, 1)");
-        */
-
         // player is a global variable
         this.player = player;
         this.player.start(new Vector2(canvas.width / 2, canvas.height - 60));
 
+        // Contador de segundos, cada segundo suma 1 a la puntuacioón total
         this.secs = 0;
         this.maxsecs = 1;
 
+        // Para evitar que las balas despawneen al morir el enemigo que las disparó, su gestión se hace en game
         this.enemyBullets = new BulletPool(14, 1);
 
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
-
         this.enemies.forEach(enemy => enemy.Start());
     },
 
     Update: function(deltaTime)
     {
+        // Si no está en gameover, el juego continua su ejecución
         if(!this.gameover)
         {
             // +1 punto cada sec
@@ -45,7 +37,7 @@ var game = {
                 this.secs = 0;
             }
 
-            // Update
+            // Updates de turno
             this.player.update(deltaTime);
 
             this.enemies.forEach(enemy => {
@@ -58,29 +50,34 @@ var game = {
 
             this.enemyBullets.Update(deltaTime);
 
+            // Colisiones de las balas enemigas
             for (let b = 0; b < this.enemyBullets.bullets.length; b++)
             {
-                    let enembullet = this.enemyBullets.bullets[b];
+                let enembullet = this.enemyBullets.bullets[b];
 
+                    // Si la bala enemiga está activa
                     if (enembullet.active)
                     {
+                        // Comprueba si el player tiene el Power Up de parar balas con las suyas
                         if(player.shieldbullet)
                         {
                             for (let p = 0; p < this.player.bulletPool.bullets.length; p++)
                             {
                                 let playerbullet = this.player.bulletPool.bullets[p];
                                 
+                                // Desactiva las 2 balas que colisionan
                                 if(playerbullet.active && playerbullet.CheckCollision(enembullet.position))
                                 {
                                     this.player.bulletPool.Deactivate(playerbullet);
                                     this.enemyBullets.Deactivate(enembullet);
-                                    //////////////////////////////////////////////////////////////////////
+                                    
                                 }
                             }
                         }
 
                         let collision = this.player.CheckCollision(enembullet.position);
-
+                        
+                        // Si la bala enemiga impacta en el player se desactiva y le hace daño
                         if (collision)
                         {
                             this.enemyBullets.Deactivate(enembullet);
@@ -90,9 +87,10 @@ var game = {
             }  
 
 
-            // check bullets-enemies or player-enemies collisions
+            // Checkea las colisiones entre balas del player o el player contra enemigos
             for (let i = 0; i < this.enemies.length; i++)
             {
+                // Si los enemigos se salen del mapa por abajo, mueren
                 if(this.enemies[i].position.y > canvas.height + 15)
                 {
                     this.enemies[i].Damage(100);
@@ -103,9 +101,12 @@ var game = {
 
                 let collision = this.enemies[i].CheckCollision(player.position);
 
+                // Si el player choca contra un enemigo
                 if (collision)
                 {
                     let enemyDead = this.enemies[i].Damage(this.player.damageOnCollision);
+
+                    // Si la colisión mata al enemigo (de momento siempre matan a enemigos, sería para evitar cheesear a bosses al chocarse)
                     if (enemyDead)
                     { 
                         this.playerHitted();
@@ -114,14 +115,17 @@ var game = {
                     }
                 }
 
+                // Comprueba si las balas del player están impactando contra algún enemigo
                 for (let j = 0; j < this.player.bulletPool.bullets.length; j++)
                 {
                     let bullet = this.player.bulletPool.bullets[j];
 
+                    // Si la bala está activa
                     if (bullet.active)
                     {
                         let collision = this.enemies[i].CheckCollision(bullet.position);
 
+                        // Y colisiona con el enemigo
                         if (collision)
                         {
                             // bullet 'j' has collide with enemy 'i'
@@ -132,7 +136,7 @@ var game = {
                             this.player.bulletPool.Deactivate(bullet);
                             //console.log("Impacto a enemigo");
                             
-                            // kill enemies, spawn more if enemies list = 0
+                            // Solo cuando un enemigo muere de un balazo aumenta la puntuación,
                             if (enemyDead)
                             {
                                 this.score += this.enemies[i].scoreValue;
@@ -146,7 +150,7 @@ var game = {
                 }  
             }
             
-            // check power ups - player collisions
+            // Checkea cuando un power up colisiona con un player
             for (let i = 0; i < this.powerups.length; i++)
             {
                 if(this.powerups[i].position.y > canvas.height + 10)
@@ -170,6 +174,7 @@ var game = {
         }
     },
 
+    // Resta vida al player y cuando es igual a 0 acaba la partida
     playerHitted: function()
     { 
         this.player.GetHitted();
@@ -184,6 +189,7 @@ var game = {
     },
 
 
+    // Genera un sonido de explosión entre 3 posibles al matar a un enemigo
     ExplosionSound: function()
     {
         let explType = Math.round(randomBetween(0.51, 3.49));
@@ -196,6 +202,7 @@ var game = {
         }
     },
 
+    // Genera power ups un (100 - rng*100)% de las veces que matas a un enemigo
     GeneratePUP: function(i)
     {
         let rng = 0.85;
@@ -212,7 +219,7 @@ var game = {
                     rng = 0.7;
                 }
             }
-        }
+        } // rng aumenta en función de tu puntuación
 
         if (Math.random() >= rng)
         {
@@ -222,13 +229,18 @@ var game = {
         }
     },
 
+    // Elimina al enemigo y genera más
     GenerateEnemies: function(i)
     {
+        // Elimina
         RemoveElementAt(this.enemies, i);
 
         //console.log("N enemigos: " + this.enemies.length);
+
+        // Si era el último enemigo, genera más
         if (this.enemies.length == 0)
         {
+            // Aumenta el número de enemigos que se pueden generar por cada 200 puntos
             let masEnems = 0;
             if (this.score < 2000) masEnems = Math.round(this.score/200);
             else masEnems = 10;
@@ -240,6 +252,7 @@ var game = {
 
             //console.log("Generando enemigos: " + rng)
 
+            // Dispersa a los enemigos generados por encima del canvas
             for (let i = 0; i < rng; i++)
             {
                 rngX = randomBetween(50, canvas.width - 50);
@@ -258,15 +271,12 @@ var game = {
         // Draw
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // background gradient
-        ctx.fillStyle = this.bgGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+        // Mueve y loopea de forma perfecta el BG para generar una sensación de movimiento infinito
+        // Solución no muy elegante
         ctx.drawImage(graphicAssets.bg.image, 0, this.bgy - graphicAssets.bg.image.height + canvas.height);
         ++this.bgy;
         if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        
         if(!this.gameover)
         {
             // draw the player
@@ -277,16 +287,18 @@ var game = {
                 enemy.Draw(ctx);
             });
 
+            // draw power ups
             this.powerups.forEach(powerup => {
                 powerup.Draw(ctx);
             });
 
+            // draw enemyBullets
             this.enemyBullets.Draw(ctx);
 
             // draw the aiming point
             ctx.drawImage(graphicAssets.aim.image, Input.mouse.x - graphicAssets.aim.image.width / 2, Input.mouse.y - graphicAssets.aim.image.height / 2);
 
-            // draw life
+            // Dibuja un corazón lleno cuando la vida es par, y uno a medias cuando es impar
             for(let i = 0, anchor = graphicAssets.heart.image.width + 5; i < this.player.life / 2; i++)
             {
                 if (Math.trunc(this.player.life / 2) >= i + 1)
@@ -295,7 +307,7 @@ var game = {
                 ctx.drawImage(graphicAssets.halfheart.image, 15 + anchor * i, 10);
             }
 
-            // Corazones vacios hardcodeados, no me gusta este approach
+            // Corazones vacios hardcodeados, no me gusta este approach pero si no, simplemente desaparecen
             if (this.player.life < 5) ctx.drawImage(graphicAssets.emptyheart.image, 15 + (graphicAssets.heart.image.width + 5) * 2, 10);
             if (this.player.life < 3) ctx.drawImage(graphicAssets.emptyheart.image, 15 + graphicAssets.heart.image.width + 5, 10);
             if (this.player.life < 1) ctx.drawImage(graphicAssets.emptyheart.image, 15, 10);

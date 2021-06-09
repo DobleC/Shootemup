@@ -1,3 +1,5 @@
+// Clase Power Up, funciona de forma similar a un enemigo de Lv1, pero este no puede ser destruido excepto por contacto
+// Si es destruído el jugador recibe una mejora asociada al PU
 class PowerUp
 {
     constructor(position)
@@ -6,9 +8,10 @@ class PowerUp
         this.rotation = 0;
         this.scale = 1;
         this.speed = 125;
-
         this.effect = Math.round(randomBetween(0.51, 7.49));
         this.img = null;
+
+        //En función del effect se selecciona una de las 7 posibles imágenes que puede tener un PU
         switch (this.effect)
         {
             case 1: 
@@ -47,7 +50,7 @@ class PowerUp
 
         this.pivot = new Vector2(this.halfWidth, this.halfHeight);
 
-
+        // Colisión cuadrada
         this.collider = {
             originalPolygon : [
                 {x: -30, y: -30},
@@ -60,6 +63,7 @@ class PowerUp
 
     }
 
+    // Rellena el collider
     Start()
     {
         for (let i = 0; i < this.collider.originalPolygon.length; i++)
@@ -68,12 +72,10 @@ class PowerUp
 
     Update(deltaTime)
     {
-        // move towards the player
-        let movementVector = new Vector2(0, 1);;
-        
+        // Se mueve en dirección Y positiva
+        let movementVector = new Vector2(0, 1);
         
         this.rotation = Math.atan2(movementVector.y, movementVector.x);
-
         this.position.x += Math.cos(this.rotation) * this.speed * deltaTime; 
         this.position.y += Math.sin(this.rotation) * this.speed * deltaTime;
         
@@ -86,15 +88,12 @@ class PowerUp
                 this.position.x + this.collider.originalPolygon[i].x;
             this.collider.transformedPolygon[i].y =
                 this.position.y + this.collider.originalPolygon[i].y;
-
-            // 2: update the vertex position regarding the polygon rotation
-           // this.collider.transformedPolygon[i] = RotatePointAroundPoint(this.position, this.collider.transformedPolygon[i], -this.rotation);// + PIH);
         }
     }
 
     Draw(ctx)
     {
-        // draw the enemy sprite
+        // draw the sprite
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(Math.atan2(this.rotation) + PIH);
@@ -102,6 +101,7 @@ class PowerUp
 
         ctx.restore();
 
+        // Muestra el collider si está en modo debug
         if(debug)
         {
             // draw the collider polygon
@@ -121,11 +121,13 @@ class PowerUp
         }
     }
 
+    // Checkea si colisiona con algo
     CheckCollision(Position)
     {
         return CheckCollisionPolygon(Position, this.collider.transformedPolygon);
     }
 
+    // Aplica el efecto que tenga al player si ha colisionado con él
     doEffect(Player)
     {
         switch (this.effect)
