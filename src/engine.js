@@ -79,6 +79,14 @@ var graphicAssets = {
         path: "assets/moon2.png",
         image: null
     },
+    moon3: {
+        path: "assets/moon3.png",
+        image: null
+    },
+    moon4: {
+        path: "assets/moon4.png",
+        image: null
+    },
     pulife: {
         path: "assets/PULife.png",
         image: null
@@ -220,6 +228,10 @@ function HideMenuAndStart()
         audio.hurt = document.getElementById("hurt");
 
         audio.powerup = document.getElementById("powerup");
+
+        audio.music = document.getElementById("music");
+        
+        music.loop = true;
 
         // Start the game
         game.Start();

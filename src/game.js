@@ -22,6 +22,8 @@ var game = {
         // init the enemies
         this.enemies.push(new Enemy(new Vector2(canvas.width / 2, 100)));
         this.enemies.forEach(enemy => enemy.Start());
+
+        audio.music.play(); 
     },
 
     Update: function(deltaTime)
@@ -319,10 +321,14 @@ var game = {
     twoY: null,
     threeY: null,
     fourY: null,
+    fiveY: null,
+    sixY: null,
     oneX: null,
     twoX: null,
     threeX: null,
     fourX: null,
+    fiveX: null,
+    sixX: null,
 
     MoveBG: function()
     {
@@ -335,6 +341,8 @@ var game = {
         ctx.drawImage(graphicAssets.planet2.image, this.twoX, this.twoY);
         ctx.drawImage(graphicAssets.moon1.image, this.threeX, this.threeY);
         ctx.drawImage(graphicAssets.moon2.image, this.fourX, this.fourY);
+        ctx.drawImage(graphicAssets.moon3.image, this.fiveX, this.fiveY);
+        ctx.drawImage(graphicAssets.moon4.image, this.sixX, this.sixY);
     },
 
     CheckPlanets: function()
@@ -343,31 +351,43 @@ var game = {
         if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
 
         
-        if(this.oneY == null || this.oneY < -102)
+        if(this.oneY == null || this.oneY > 822)
         {
-            this.oneY = 800 + randomBetween(0, 250);
+            this.oneY = -randomBetween(100, 250);
             this.oneX = randomBetween(125, canvas.width - 100);
         }
-        if(this.twoY == null || this.twoY < -98)
+        if(this.twoY == null || this.twoY > 818)
         {
-            this.twoY = 800 + randomBetween(0, 250);
+            this.twoY = -randomBetween(100, 250);
             this.twoX = randomBetween(125, canvas.width - 100);
         }
-        if(this.threeY == null || this.threeY < -36) 
+        if(this.threeY == null || this.threeY > 756) 
         {
-            this.threeY = 800 + randomBetween(0, 250);
+            this.threeY = -randomBetween(40, 250);
             this.threeX = randomBetween(50, canvas.width - 50);
         }
-        if(this.fourY == null || this.fourY < -34)
+        if(this.fourY == null || this.fourY > 754)
         {
-            this.fourY = 800 + randomBetween(0, 250);
+            this.fourY = -randomBetween(40, 250);
             this.fourX = randomBetween(50, canvas.width - 50);
         }
+        if(this.fiveY == null || this.fiveY > 755)
+        {
+            this.fiveY = -randomBetween(40, 250);
+            this.fiveX = randomBetween(50, canvas.width - 50);
+        }
+        if(this.sixY == null || this.sixY > 753)
+        {
+            this.sixY = -randomBetween(40, 250);
+            this.sixX = randomBetween(50, canvas.width - 50);
+        }
 
-        this.oneY   -= 0.75;
-        this.twoY   -= 1;
-        this.threeY -= 1.25;
-        this.fourY  -= 1.5;
+        this.oneY   += 0.75;
+        this.twoY   += 1;
+        this.threeY += 1.25;
+        this.fourY  += 1.35;
+        this.fiveY  += 1.45;
+        this.sixY  += 1.55;
     },
 
 }

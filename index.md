@@ -50,5 +50,6 @@
     <audio id="expl3"   src="assets/explosion3.wav" style="display: none;"></audio>
     <audio id="hurt"    src="assets/hurt.wav"       style="display: none;"></audio>
     <audio id="powerup" src="assets/powerup.wav"    style="display: none;"></audio>
+    <audio id="music"   src="assets/music.wav"      style="display: none;"></audio>
 </body>
 </html>
