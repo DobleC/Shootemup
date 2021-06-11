@@ -8,10 +8,8 @@ body {
 }
 
 canvas {
-    border: solid 1px black;
-    
     display: block;
-    background-color: white;
+    background-color: black;
     width: 100%;
     height: 100%;
 }
@@ -28,11 +26,11 @@ body {
 }
 
 #container {
-    background-color: white;
+    background-color: black;
     position: relative;
     margin: 20px auto;
-    width: 500px;
-    height: 720px;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
