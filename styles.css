@@ -11,7 +11,7 @@ canvas {
     border: solid 1px black;
     
     display: block;
-    background-color: white;
+    background-color: black;
 }
 
 * {
@@ -26,7 +26,7 @@ body {
 }
 
 #container {
-    background-color: white;
+    background-color: black;
     position: relative;
     margin: 20px auto;
     width: 500px;
