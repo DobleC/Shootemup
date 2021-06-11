@@ -63,6 +63,22 @@ var graphicAssets = {
         path: "assets/bg.png",
         image: null
     },
+    planet1: {
+        path: "assets/planet1.png",
+        image: null
+    },
+    planet2: {
+        path: "assets/planet2.png",
+        image: null
+    },
+    moon1: {
+        path: "assets/moon1.png",
+        image: null
+    },
+    moon2: {
+        path: "assets/moon2.png",
+        image: null
+    },
     pulife: {
         path: "assets/PULife.png",
         image: null

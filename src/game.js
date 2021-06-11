@@ -271,11 +271,7 @@ var game = {
         // Draw
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Mueve y loopea de forma perfecta el BG para generar una sensación de movimiento infinito
-        // Solución no muy elegante
-        ctx.drawImage(graphicAssets.bg.image, 0, this.bgy - graphicAssets.bg.image.height + canvas.height);
-        ++this.bgy;
-        if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
+        this.MoveBG();
         
         if(!this.gameover)
         {
@@ -317,6 +313,61 @@ var game = {
             ctx.fillText("Score: " + this.score, canvas.width/2 + 50, 42);
            
         }
-    }
+    },
+
+    oneY: null,
+    twoY: null,
+    threeY: null,
+    fourY: null,
+    oneX: null,
+    twoX: null,
+    threeX: null,
+    fourX: null,
+
+    MoveBG: function()
+    {
+        // Mueve y loopea de forma perfecta el BG para generar una sensación de movimiento infinito
+        // Solución no muy elegante
+        ctx.drawImage(graphicAssets.bg.image, 0, this.bgy - graphicAssets.bg.image.height + canvas.height);
+        this.CheckPlanets();
+
+        ctx.drawImage(graphicAssets.planet1.image, this.oneX, this.oneY);
+        ctx.drawImage(graphicAssets.planet2.image, this.twoX, this.twoY);
+        ctx.drawImage(graphicAssets.moon1.image, this.threeX, this.threeY);
+        ctx.drawImage(graphicAssets.moon2.image, this.fourX, this.fourY);
+    },
+
+    CheckPlanets: function()
+    {
+        this.bgy += 0.5;
+        if(this.bgy >= graphicAssets.bg.image.height/2) this.bgy = 0;
+
+        
+        if(this.oneY == null || this.oneY < -102)
+        {
+            this.oneY = 800 + randomBetween(0, 250);
+            this.oneX = randomBetween(125, 400);
+        }
+        if(this.twoY == null || this.twoY < -98)
+        {
+            this.twoY = 800 + randomBetween(0, 250);
+            this.twoX = randomBetween(125, 400);
+        }
+        if(this.threeY == null || this.threeY < -36) 
+        {
+            this.threeY = 800 + randomBetween(0, 250);
+            this.threeX = randomBetween(50, 450);
+        }
+        if(this.fourY == null || this.fourY < -34)
+        {
+            this.fourY = 800 + randomBetween(0, 250);
+            this.fourX = randomBetween(50, 450);
+        }
+
+        this.oneY   -= 0.75;
+        this.twoY   -= 1;
+        this.threeY -= 1.25;
+        this.fourY  -= 1.5;
+    },
 
 }
