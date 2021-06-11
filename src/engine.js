@@ -143,6 +143,8 @@ function LoadImages(assets, onloaded)
 function BodyLoaded()
 {
     canvas = document.getElementById("myCanvas");
+    canvas.height = window.innerHeight;
+    canvas.width = canvas.height * 500/720;
     ctx = canvas.getContext("2d");
 
     // Setupead los eventos e inicia los menús de CSS

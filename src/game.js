@@ -346,22 +346,22 @@ var game = {
         if(this.oneY == null || this.oneY < -102)
         {
             this.oneY = 800 + randomBetween(0, 250);
-            this.oneX = randomBetween(125, 400);
+            this.oneX = randomBetween(125, canvas.width - 100);
         }
         if(this.twoY == null || this.twoY < -98)
         {
             this.twoY = 800 + randomBetween(0, 250);
-            this.twoX = randomBetween(125, 400);
+            this.twoX = randomBetween(125, canvas.width - 100);
         }
         if(this.threeY == null || this.threeY < -36) 
         {
             this.threeY = 800 + randomBetween(0, 250);
-            this.threeX = randomBetween(50, 450);
+            this.threeX = randomBetween(50, canvas.width - 50);
         }
         if(this.fourY == null || this.fourY < -34)
         {
             this.fourY = 800 + randomBetween(0, 250);
-            this.fourX = randomBetween(50, 450);
+            this.fourX = randomBetween(50, canvas.width - 50);
         }
 
         this.oneY   -= 0.75;
