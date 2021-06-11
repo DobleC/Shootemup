@@ -186,6 +186,7 @@ var game = {
         {
             document.getElementById("gamescore").innerText = this.score;
             this.gameover = true;
+            audio.music.pause(); 
             GameOver();
         }
     },
