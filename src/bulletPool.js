@@ -84,7 +84,7 @@ class Bullet {
                 this.PlayerShot();
                 break;
             
-            case 1: // Disparo enemigo
+            case 1: // Disparo enemig
                 ctx.drawImage(graphicAssets.energy.image, -graphicAssets.energy.image.width/2, -graphicAssets.energy.image.height/2);
                 break;
         }
